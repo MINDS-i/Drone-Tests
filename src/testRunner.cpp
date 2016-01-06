@@ -3,6 +3,8 @@
 #include "vec3Tests.h"
 #include "greatCircleTests.h"
 #include "pidTests.h"
+#include "decoderTest.h"
+#include "circBufTest.h"
 using namespace std;
 int main(int argc, char const *argv[]) {
     cout << "Vec3 Unit tests: " << endl;
@@ -13,5 +15,9 @@ int main(int argc, char const *argv[]) {
     GreatCircleTests::runTests();
     cout << "PID Tests: " << endl;
     PIDTests::runTests();
+    cout << "circBuf Tests: " << endl;
+    circBufTest::runTests();
+    cout << "Decoder Tests: " << endl;
+    decoderTest::runTests();
 	return 0;
 }

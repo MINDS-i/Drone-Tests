@@ -4,7 +4,16 @@
 #include <iostream>
 #include <math.h>
 
-#define ASSERT(a) if(a) return false;
+#define ASSERT(a) if(a) { \
+	std::cout<< #a << " was false";\
+	return false; \
+}
+#define CASSERT(a,b) { \
+	if(!((a) == (b))) { \
+		std::cout<< #a << "=" << a << "  !=  " << #b << " "; \
+		return false; \
+	} \
+}
 #define FPASSERT(a,b) { \
 const float ans = a; \
 const float chk = b; \
