@@ -13,6 +13,12 @@ if(!fuzzyCompare(ans,chk)) { \
 	return false; \
 } \
 }
+#define CASSERT(a,b) { \
+	if(!((a) == (b))) { \
+		std::cout<< #a << "=" << a << "  !=  " << #b << " "; \
+		return false; \
+	} \
+}
 #define FPASSERTC(a,b,c) { \
 const float ans = a; \
 const float chk = b; \
