@@ -3,54 +3,42 @@
 #include <avr/sleep.h>
 #include <stdio.h>
 
+#include "testHooks.h"
 
-
-#if 1 // just to fix sublime text font coloring glitch
-// these registers are reserved on the atmega2560,
-// so they will not interfere with anything
-#define DBGS _SFR_IO8(0x38)
-#define DBGD _SFR_IO8(0x39)
-#endif
-
-//configure printf to write up to emulator in a constructor before main
-__attribute__((constructor))
-void init_io() {
-    fdevopen( [](char c, FILE * f) -> int { DBGD = c; return 0; }, NULL );
-}
-//The simulator is configured to stop when sleep mode is activated
-__attribute__((destructor))
-void sleep_after_exit() {
-    sleep_mode();
+bool executorOverhead(void){
+    return true;
 }
 
-const uint8_t TEST_START  = 3;
-const uint8_t CLOCK_START = 2;
-const uint8_t CLOCK_END   = 1;
-const uint8_t TEST_END    = 0;
+bool sqrtOfTwelve(void){
+    volatile float x = 12.0;
+    volatile float y = sqrt(x);
+    return y == 1.41421356237f;
+}
 
-#define beginTest(testName, ...) \
-    do { \
-        DBGS = TEST_START; \
-        printf(testName, ##__VA_ARGS__); \
-        DBGS = CLOCK_START; \
-    } while(0)
+bool debugMessage(void){
+    printf("Debug Message #%i here", 1);
+    return false;
+}
 
-#define endTest(results, ...) \
-    do { \
-        DBGS = CLOCK_END; \
-        printf(results, ##__VA_ARGS__); \
-        DBGS = TEST_END; \
-    } while(0)
+bool longMessage(void){
+    for(int i=0; i<10; i++){
+        printf("Debug Message #%i here\n", i);
+    }
+    return false;
+}
 
 int main(void){
+    beginTest("basic overhead");
+    passTest();
 
-    beginTest("overhead");
-    endTest("Passed");
+    TEST(executorOverhead);
+    TEST(sqrtOfTwelve);
+    TEST(debugMessage);
+    TEST(longMessage);
 
-    beginTest("Square root of 12.0");
-    volatile float x = 2.0;
-    volatile float y = sqrt(x);
-    endTest("Passed, was %f\n", y);
+    beginTest("manual run");
+    sqrtOfTwelve();
+    passTest();
 
     return 0;
 }

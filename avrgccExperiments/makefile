@@ -5,7 +5,7 @@ CFLAGS=$(MCU) $(CPU_SPEED) -std=gnu++11 -g -Os -std=gnu++11 -fno-exceptions -ffu
 LFLAGS=-Wl,-u,vfprintf -lprintf_flt
 
 simulation:
-	g++ -I/usr/include/simavr -lsimavr ./sim.cpp -o sim
+	g++ -std=gnu++11 -I/usr/include/simavr -lsimavr ./sim.cpp -o sim
 
 elf:
 	avr-g++ $(CFLAGS) $(LFLAGS) main.cpp -o ./main.elf
