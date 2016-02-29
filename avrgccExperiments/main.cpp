@@ -42,17 +42,7 @@ const uint8_t TEST_END    = 0;
         DBGS = TEST_END; \
     } while(0)
 
-void test(){
-    DBGS = 0x00;
-    DBGS = 0x00;
-    DBGS = 0x00;
-    DBGS = 0x00;
-    _delay_ms(1000);
-    DBGS = 0x01;
-}
-
 int main(void){
-    //test();
 
     beginTest("overhead");
     endTest("Passed");
