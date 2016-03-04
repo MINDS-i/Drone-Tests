@@ -6,7 +6,7 @@ droneLibsSrcDir   = '../../src/'
 simavrLibDir      = '/usr/include/simavr'
 targetAVRplatform = '-mmcu=atmega2560'
 
-sim  = Environment(CCFLAGS = '-std=gnu++11')
+sim = Environment(CCFLAGS = '-std=gnu++11')
 sim.Append(CPPPATH = [simavrLibDir])
 sim.Append(LIBS = ['simavr'])
 sim.Program('testRunner', 'simulator/testRunner.cpp')
@@ -43,4 +43,5 @@ for test in Glob('build/testSrc/*.cpp'):
     elf = avr.Program("testElfs/" + test.name + ".elf",
                       [test] + avrLibSrc + implUnderTest)
     avr.AddPostAction(elf, "./testRunner "+elf[0].abspath)
+    Depends(elf, 'testRunner')
     avr.AlwaysBuild(elf)
