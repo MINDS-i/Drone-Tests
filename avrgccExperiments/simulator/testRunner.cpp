@@ -23,6 +23,28 @@ avr_t * avr;
 
 const int LINE_LENGTH = 40;
 
+namespace Colors{
+    typedef const char * cstr;
+    cstr Black       = "\033[0;30m";
+    cstr Blue        = "\033[0;34m";
+    cstr Orange      = "\033[0;33m";
+    cstr Cyan        = "\033[0;36m";
+    cstr DarkGray    = "\033[1;30m";
+    cstr Green       = "\033[0;32m";
+    cstr LightBlue   = "\033[1;34m";
+    cstr LightCyan   = "\033[1;36m";
+    cstr LightGray   = "\033[0;37m";
+    cstr LightGreen  = "\033[1;32m";
+    cstr LightPurple = "\033[1;35m";
+    cstr LightRed    = "\033[1;31m";
+    cstr NoColor     = "\033[0m";
+    cstr Purple      = "\033[0;35m";
+    cstr Red         = "\033[0;31m";
+    cstr White       = "\033[1;37m";
+    cstr Yellow      = "\033[1;33m";
+}
+
+
 class Test {
 public:
     uint32_t start;
@@ -48,20 +70,36 @@ public:
     }
 private:
     void describe(ostream& out){
-        out << name.str() << " ";
-        for(int i=name.str().length()+3; i<LINE_LENGTH; i++)
-            cout << "-";
-        cout << "> " << ((passed)? "passed" : "FAILED") << " ";
-        cout << "(" << (end-start) << " cycles)";
-        cout << endl;
 
+        out << ((passed)? Colors::LightBlue : Colors::LightRed); {
+            out << name.str() << " ";
+        }
+
+        out << Colors::DarkGray; {
+            for(int i=name.str().length()+3; i<LINE_LENGTH; i++)
+                out << "-";
+            out << "> ";
+        }
+
+        out << ((passed)? Colors::LightBlue : Colors::LightRed); {
+            out << ((passed)? "passed" : "FAILED") << " ";
+        }
+
+        out << Colors::Blue; {
+            out << "(" << (end-start) << " cycles)";
+            out << endl;
+        }
+
+        out << Colors::NoColor;
+
+        //Echo the debugging info we received, but tabbed in one level
         if(debug.str().length() > 0){
-            cout << "\t";
+            out << "\t";
             for(auto c : debug.str()){
-                if(c == '\n') cout << endl << "\t";
-                else cout << c;
+                if(c == '\n') out << endl << "\t";
+                else out << c;
             }
-            cout << endl;
+            out << endl;
         }
     }
 };
@@ -100,9 +138,12 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
 
-    cout << "Running tests from " << argv[1] << endl;
-    elf_read_firmware(argv[1], &f);
-    avr = avr_make_mcu_by_name("atmega2560");
+    cout << Colors::LightPurple; {
+        cout << "Running tests from " << argv[1] << endl;
+        elf_read_firmware(argv[1], &f);
+        avr = avr_make_mcu_by_name("atmega2560");
+    } cout << Colors::NoColor;
+
     if(!avr){
         cerr << "Failed to construct avr simulation" << endl;
         exit(1);
