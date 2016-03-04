@@ -15,8 +15,9 @@ avr = DefaultEnvironment(CC = "avr-gcc", CXX = "avr-g++")
 #Map drone/test src onto build dir so keep *.o and *.d files out of the way
 avr.VariantDir('build/droneSrc', droneLibsSrcDir, duplicate=0)
 avr.VariantDir('build/testSrc', testSrcDir, duplicate=0)
+avr.VariantDir('build/avrLib', './avrLibs', duplicate=0)
 avr.Append(CPPPATH  = ['simulator'])
-avr.Append(CPPPATH  = ['build/droneSrc'])
+avr.Append(CPPPATH  = ['build/droneSrc', 'build/avrLib'])
 avr.Append(CPPFLAGS = [targetAVRplatform, '-DF_CPU=16000000UL'])
 avr.Append(CPPFLAGS = ['-std=gnu++11', '-g', '-Os', '-MMD'])
 avr.Append(CPPFLAGS = ['-fno-exceptions', '-ffunction-sections',
@@ -24,6 +25,8 @@ avr.Append(CPPFLAGS = ['-fno-exceptions', '-ffunction-sections',
 avr.Append(LIBS = 'printf_flt')
 avr.Append(LINKFLAGS = ['-Wl,-u,vfprintf'])
 avr.Append(LINKFLAGS = [targetAVRplatform])
+
+avrLibSrc = Glob('build/avrLib/*.cpp')
 
 def scanTestFile(name):
     sourceFile = open(name, "r")
@@ -37,6 +40,7 @@ def scanTestFile(name):
 
 for test in Glob('build/testSrc/*.cpp'):
     implUnderTest = scanTestFile(test.rstr())
-    elf = avr.Program("testElfs/" + test.name + ".elf", [test] + implUnderTest)
+    elf = avr.Program("testElfs/" + test.name + ".elf",
+                      [test] + avrLibSrc + implUnderTest)
     avr.AddPostAction(elf, "./testRunner "+elf[0].abspath)
     avr.AlwaysBuild(elf)

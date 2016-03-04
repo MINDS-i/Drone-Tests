@@ -2,7 +2,6 @@
 #define VEC3UNITTESTS_H
 #include "testHooks.h"
 #include "math/Vec3.h"
-
 //TESTING "math/Vec3.cpp"
 //TESTING "math/Quaternion.cpp"
 
