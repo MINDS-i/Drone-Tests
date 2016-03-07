@@ -1,12 +1,10 @@
 #ifndef MICROS_H
 #define MICROS_H
-#include <cstdlib>
-#include <iostream>
-#include <ctime>
 #include <stdint.h>
 #include <math.h>
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-using namespace std;
+#define min(a,b) ((a)<(b)?(a):(b))
+#define max(a,b) ((a)>(b)?(a):(b))
 typedef bool boolean;
 uint32_t micros();
 uint32_t millis();

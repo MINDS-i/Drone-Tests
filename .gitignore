@@ -2,3 +2,6 @@
 .sconsign.dblite
 test
 build
+*.elf
+*.o
+testRunner
