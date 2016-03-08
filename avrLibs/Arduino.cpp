@@ -19,3 +19,13 @@ void setMicros(uint32_t us){
 void setMillis(uint32_t ms){
 	_falseTime = ms*1000;
 }
+extern "C" {
+    void __cxa_pure_virtual(void) {
+      printf("ERROR __cxa_pure_virtual");
+      abort();
+    }
+    void __cxa_deleted_virtual(void) {
+      printf("ERROR __cxa_deleted_virtual");
+      abort();
+    }
+}
