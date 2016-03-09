@@ -8,7 +8,7 @@
 #include "math/SpatialMath.h"
 //TESTING "math/SpatialMath.cpp"
 
-const float EPSILON = 0.00000001;
+const float EPSILON = 0.0000005;
 
 typedef struct TestCase { float rad; float deg; } TestCase;
 const TestCase cases[] {
