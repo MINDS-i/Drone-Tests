@@ -1,7 +1,8 @@
 # Drone-Tests
 Holds tests for MINDS-I-Drone project
 
-to run tests, use "scons -s"; to rebuild, use "scons -c" first
+to run tests, use "scons -s"; to rebuild, use "scons -c" first; to build
+and run a single test using "scons only=filename"
 
 An avr emulator and test runner based on the simavr project gets compiled to
     "testRunner"

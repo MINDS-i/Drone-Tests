@@ -44,4 +44,7 @@ for test in Glob('build/testSrc/*.cpp'):
                       [test] + avrLibSrc + implUnderTest)
     avr.AddPostAction(elf, "./testRunner "+elf[0].abspath)
     Depends(elf, 'testRunner')
-    avr.AlwaysBuild(elf)
+
+    runonly = ARGUMENTS.get('only', False)
+    if (not runonly) or (runonly == test.name):
+        avr.AlwaysBuild(elf)
