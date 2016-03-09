@@ -3,6 +3,7 @@
 #include <avr/sleep.h>
 #include <stdio.h>
 #include <math.h>
+#include <float.h>
 
 #include "testHooksCommon.h"
 
@@ -23,8 +24,13 @@ void sleep_after_exit() {
     sleep_mode();
 }
 
-bool fuzzyCompare(float a, float b, float diff=0.0001){
-    return (fabs(a-b) < diff);
+bool fuzzyCompare(float a, float b, float diff=0.0000005){
+    float absA  = fabs(a);
+    float absB  = fabs(b);
+    float error = fabs(a - b);
+
+    if(b == 0 || a == 0) return error < diff;
+    return (error/(absA+absB)) < diff;
 }
 
 /* Call with printf syntax to start a test of a given name */

@@ -3,11 +3,11 @@
 //TESTING "math/Quaternion.cpp"
 //TESTING "math/Vec3.cpp"
 
-bool fuzzyQCompare(Quaternion a, Quaternion b){
-	return	fuzzyCompare(a[0], b[0]) &&
-			fuzzyCompare(a[1], b[1]) &&
-			fuzzyCompare(a[2], b[2]) &&
-			fuzzyCompare(a[3], b[3])   ;
+bool fuzzyQCompare(Quaternion a, Quaternion b, float diff = 0.0000005){
+	return	fuzzyCompare(a[0], b[0], diff) &&
+			fuzzyCompare(a[1], b[1], diff) &&
+			fuzzyCompare(a[2], b[2], diff) &&
+			fuzzyCompare(a[3], b[3], diff)   ;
 }
 #define toRad(x) ((x*3.1415926f)/180.f)
 #define toDeg(x) ((x*180.f)/3.1415926f)
@@ -16,14 +16,14 @@ bool QtestEulerConstr(){
 	return fuzzyQCompare(a, Quaternion(	0.883883,
 										0.306186,
 										0.306186,
-										0.176777	));
+										0.176777 ), 0.00001);
 }
 bool QtestAxisAngleConstr(){
 	Quaternion a(Vec3(4,0,0), toRad(90));
-	return fuzzyQCompare(a, Quaternion( .7071,
-										.7071,
+	return fuzzyQCompare(a, Quaternion( 0.7071067,
+										0.7071067,
 										0,
-										0	));
+										0	), 0.00001);
 }
 bool QtestInverse(){
 	Quaternion a(1, 0, 1, 2);

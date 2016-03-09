@@ -56,7 +56,7 @@ bool v3testRotateBy(){
 	Quaternion q(Vec3(-1,-1,0), (3.1415926/2));
 	Vec3 a(0,0,1);
 	a.rotateBy(q);
-	return fuzzyVecCompare(a, Vec3(0.7071, -0.7071, 0));
+	return fuzzyVecCompare(a, Vec3(0.7071067, -0.7071067, 0));
 }
 bool v3testMultAssn(){
 	Vec3 a( 1, 1, 1);
