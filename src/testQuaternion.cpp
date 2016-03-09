@@ -220,7 +220,7 @@ bool QtestIntegrate(){
 	Quaternion a(Vec3( 2, 3, 4), toRad(35));
 	Quaternion b(Vec3( 2,-4, 3), toRad(37));
 
-	float samps = 1000;
+	float samps = 20;
 	float dist;
 	for(int i=0; i<6*samps; i++){
 		Vec3 rate = a.getDerivative(b, (1.f/samps));
