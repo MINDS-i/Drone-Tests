@@ -166,7 +166,41 @@ bool parseMagVar(){
     }
     return true;
 }
-bool testBadStringFirst(){
+bool delayedInput(){
+    char charContainer[] = {'_', '\0'};
+    StringStream ss(charContainer);
+    NMEA nmea(ss);
+    for(int i=0; i<strlen(goodData[0].str); i++){
+        charContainer[0] = goodData[0].str[i];
+        ss.reset(charContainer);
+        nmea.update();
+    }
+    ss.reset("$");
+    nmea.update();
+    FPASSERT(goodData[0].time, nmea.getTimeOfFix());
+    CASSERT( goodData[0].active, !nmea.getWarning());
+    FPASSERT(goodData[0].latitude, nmea.getLatitude());
+    FPASSERT(goodData[0].longitude, nmea.getLongitude());
+    FPASSERT(goodData[0].speed, nmea.getGroundSpeed());
+    FPASSERT(goodData[0].trackAngle, nmea.getCourse());
+    CASSERT( goodData[0].date, nmea.getDateOfFix());
+    FPASSERT(goodData[0].magVar, nmea.getMagVar());
+}
+bool testNewInput(){
+    StringStream ss(goodData[0].str);
+    NMEA nmea(ss);
+    ASSERT(!nmea.newData());
+    nmea.update();
+    ss.reset("$");
+    nmea.update();
+    ASSERT(nmea.newData());
+    nmea.getLatitude();
+    ASSERT(!nmea.newData());
+    nmea.update();
+    ASSERT(!nmea.newData());
+    return true;
+}
+bool badStringFirst(){
     // test that the parser can recover from getting a bunch of bad data first
     for(int i=0; i<numBadStrings; i++){
         StringStream ss(badStrings[i]);
@@ -190,14 +224,16 @@ bool testBadStringFirst(){
 }
 
 int main(void){
-    TEST(parseTime         );
-    TEST(parseActive       );
-    TEST(parseLatitude     );
-    TEST(parseLongitude    );
-    TEST(parseSpeed        );
-    TEST(parseTrackAngle   );
-    TEST(parseDate         );
-    TEST(parseMagVar       );
-    TEST(testBadStringFirst);
+    TEST(parseTime       );
+    TEST(parseActive     );
+    TEST(parseLatitude   );
+    TEST(parseLongitude  );
+    TEST(parseSpeed      );
+    TEST(parseTrackAngle );
+    TEST(parseDate       );
+    TEST(parseMagVar     );
+    TEST(badStringFirst  );
+    TEST(delayedInput    );
+    TEST(testNewInput    );
     return 0;
 }
