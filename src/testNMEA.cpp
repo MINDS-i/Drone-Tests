@@ -79,8 +79,28 @@ const GPRMC goodData[] {
 const int numGoodData = sizeof(goodData)/sizeof(goodData[0]);
 
 const char * badStrings[] {
-
+    "$$$$$$$$$$$",
+    "$,,,,,,,,,,,,,,,,,,,",
+    "$GPRMC,,,,,,,,,,,,,,,,,,",
+    "$GPRMC$",
+    "$GPRMC,123519,X,4807.038,N,01131.000,E,022.4,084.4,230394,003.1,W*6A",
+    "$GPRMC,X,X,X,X,X,X,X,X,X,X,XXXX",
+    "$GPRMC,123519549631488436214567/89321456,A,",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "4807.038,N,01131.00000-100.4,E,022.4,084.4,2303946544563217896,003.1,W*6A",
 };
+const int numBadStrings = sizeof(badStrings)/sizeof(badStrings[0]);
 
 #define nmeaOfString(s) \
     StringStream ss(s); \
@@ -146,15 +166,38 @@ bool parseMagVar(){
     }
     return true;
 }
+bool testBadStringFirst(){
+    // test that the parser can recover from getting a bunch of bad data first
+    for(int i=0; i<numBadStrings; i++){
+        StringStream ss(badStrings[i]);
+        NMEA nmea(ss);
+        nmea.update();
+        ss.reset(goodData[0].str);
+        nmea.update();
+        ss.reset("$");
+        nmea.update();
+
+        FPASSERT(goodData[0].time, nmea.getTimeOfFix());
+        CASSERT( goodData[0].active, !nmea.getWarning());
+        FPASSERT(goodData[0].latitude, nmea.getLatitude());
+        FPASSERT(goodData[0].longitude, nmea.getLongitude());
+        FPASSERT(goodData[0].speed, nmea.getGroundSpeed());
+        FPASSERT(goodData[0].trackAngle, nmea.getCourse());
+        CASSERT( goodData[0].date, nmea.getDateOfFix());
+        FPASSERT(goodData[0].magVar, nmea.getMagVar());
+    }
+    return true;
+}
 
 int main(void){
-    TEST(parseTime       );
-    TEST(parseActive     );
-    TEST(parseLatitude   );
-    TEST(parseLongitude  );
-    TEST(parseSpeed      );
-    TEST(parseTrackAngle );
-    TEST(parseDate       );
-    TEST(parseMagVar     );
+    TEST(parseTime         );
+    TEST(parseActive       );
+    TEST(parseLatitude     );
+    TEST(parseLongitude    );
+    TEST(parseSpeed        );
+    TEST(parseTrackAngle   );
+    TEST(parseDate         );
+    TEST(parseMagVar       );
+    TEST(testBadStringFirst);
     return 0;
 }
