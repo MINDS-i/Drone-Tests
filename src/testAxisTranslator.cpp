@@ -37,7 +37,18 @@ bool identity(void){
     return true;
 }
 
+bool APMboardConversion(void){
+    Translator t = Translators::APM;
+    for(int i=0; i<numAxis; i++){
+        float input[3] = {axis[i][1], axis[i][0], -axis[i][2]};
+        Vec3 result = t(input);
+        ASSERT(vec3cmp(result, axis[i]));
+    }
+    return true;
+}
+
 int main(void){
     TEST(identity);
+    TEST(APMboardConversion);
     return 0;
 }
