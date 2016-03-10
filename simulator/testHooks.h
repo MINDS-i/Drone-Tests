@@ -63,7 +63,7 @@ bool fuzzyCompare(float a, float b, float diff=0.0000005){
 
 #define ASSERT(a) \
     do { \
-        if(a) { \
+        if(!a) { \
             printf("%s was false", #a); \
             return false; \
         } \
