@@ -10,6 +10,10 @@ private:
     const char * str;
 public:
     StringStream(const char * str): str(str) {}
+    /** reset the stream to point to a new string */
+    void reset(const char * newstr){
+        str = newstr;
+    }
     /** Number of available chars in the stream */
     int available(){
         return strlen(str);
