@@ -5,6 +5,7 @@ testSrcDir        = './src/'
 droneLibsSrcDir   = '../src/'
 simavrLibDir      = '/usr/include/simavr'
 targetAVRplatform = '-mmcu=atmega2560'
+arduinoInstallDir = '/opt/arduino'
 
 sim = Environment(CCFLAGS = '-std=gnu++11')
 sim.Append(CPPPATH = [simavrLibDir])
@@ -18,6 +19,7 @@ avr.VariantDir('build/testSrc', testSrcDir, duplicate=0)
 avr.VariantDir('build/avrLib', './avrLibs', duplicate=0)
 avr.Append(CPPPATH  = ['simulator'])
 avr.Append(CPPPATH  = ['build/droneSrc', 'build/avrLib'])
+avr.Append(CPPPATH  = ['build/arduino'])
 avr.Append(CPPFLAGS = [targetAVRplatform, '-DF_CPU=16000000UL'])
 avr.Append(CPPFLAGS = ['-std=gnu++11', '-g', '-Os', '-MMD'])
 avr.Append(CPPFLAGS = ['-fno-exceptions', '-ffunction-sections',
@@ -26,7 +28,15 @@ avr.Append(LIBS = 'printf_flt')
 avr.Append(LINKFLAGS = ['-Wl,-u,vfprintf'])
 avr.Append(LINKFLAGS = [targetAVRplatform])
 
-avrLibSrc = Glob('build/avrLib/*.cpp')
+#The specific files from an arduino AVR core that we want compiled for our tests
+arduinoCoreDir = arduinoInstallDir+'/hardware/arduino/avr/cores/arduino/'
+arduinoFiles = ['Printable.h', 'Print.h', 'Stream.h', 'WString.h',
+                'Print.cpp', 'Stream.cpp', 'WString.cpp']
+for file in arduinoFiles:
+    filepath = arduinoCoreDir+file
+    avr.Command('build/arduino/'+file, filepath, Copy("$TARGET", "$SOURCE"))
+
+avrLibSrc = Glob('build/avrLib/*.cpp') + Glob('build/arduino/*.cpp')
 
 def scanTestFile(name):
     sourceFile = open(name, "r")
