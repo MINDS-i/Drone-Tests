@@ -79,6 +79,7 @@ const GPRMC goodData[] {
 const int numGoodData = sizeof(goodData)/sizeof(goodData[0]);
 
 const char * badStrings[] {
+    "4807.038,N,01131.00000-100.4,E,022.4,084.4,2303946544563217896,003.1,W*6A",
     "$$$$$$$$$$$",
     "$,,,,,,,,,,,,,,,,,,,",
     "$GPRMC,,,,,,,,,,,,,,,,,,",
@@ -98,7 +99,6 @@ const char * badStrings[] {
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "4807.038,N,01131.00000-100.4,E,022.4,084.4,2303946544563217896,003.1,W*6A",
 };
 const int numBadStrings = sizeof(badStrings)/sizeof(badStrings[0]);
 
@@ -222,6 +222,15 @@ bool badStringFirst(){
     }
     return true;
 }
+void benchmark(){
+    for(int i=0; i<numGoodData; i++){
+        StringStream ss(goodData[i].str);
+        NMEA nmea(ss);
+        beginTest("benchmark %i", i);
+        nmea.update();
+        passTest();
+    }
+}
 
 int main(void){
     TEST(parseTime       );
@@ -235,5 +244,6 @@ int main(void){
     TEST(badStringFirst  );
     TEST(delayedInput    );
     TEST(testNewInput    );
+    benchmark();
     return 0;
 }
