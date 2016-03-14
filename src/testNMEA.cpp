@@ -105,10 +105,7 @@ const int numBadStrings = sizeof(badStrings)/sizeof(badStrings[0]);
 #define nmeaOfString(s) \
     StringStream ss(s); \
     NMEA nmea(ss); \
-    nmea.update(); \
-    ss.reset("$"); \
     nmea.update();
-    //the extra dollar sign is an artifact of the current NMEA implementation
 
 bool parseTime(){
     for(int i=0; i<numGoodData; i++){
@@ -175,8 +172,6 @@ bool delayedInput(){
         ss.reset(charContainer);
         nmea.update();
     }
-    ss.reset("$");
-    nmea.update();
     FPASSERT(goodData[0].time, nmea.getTimeOfFix());
     CASSERT( goodData[0].active, !nmea.getWarning());
     FPASSERT(goodData[0].latitude, nmea.getLatitude());
@@ -190,8 +185,6 @@ bool testNewInput(){
     StringStream ss(goodData[0].str);
     NMEA nmea(ss);
     ASSERT(!nmea.newData());
-    nmea.update();
-    ss.reset("$");
     nmea.update();
     ASSERT(nmea.newData());
     nmea.getLatitude();
@@ -208,8 +201,6 @@ bool badStringFirst(){
         nmea.update();
         ss.reset(goodData[0].str);
         nmea.update();
-        ss.reset("$");
-        nmea.update();
 
         FPASSERT(goodData[0].time, nmea.getTimeOfFix());
         CASSERT( goodData[0].active, !nmea.getWarning());
@@ -221,6 +212,17 @@ bool badStringFirst(){
         FPASSERT(goodData[0].magVar, nmea.getMagVar());
     }
     return true;
+}
+bool skipEmptyFields(){
+    StringStream ss("$GPRMC,000523.036,V,,,,,0.00,0.00,060180,,,N*43");
+    NMEA nmea(ss);
+    nmea.update();
+
+    CASSERT(true, nmea.getWarning());
+    CASSERT(60180, nmea.getDateOfFix());
+    FPASSERT(523.036, nmea.getTimeOfFix());
+    FPASSERT(0.0, nmea.getGroundSpeed());
+    FPASSERT(0.0, nmea.getCourse());
 }
 void benchmark(){
     for(int i=0; i<numGoodData; i++){
@@ -244,6 +246,7 @@ int main(void){
     TEST(badStringFirst  );
     TEST(delayedInput    );
     TEST(testNewInput    );
+    TEST(skipEmptyFields );
     benchmark();
     return 0;
 }
