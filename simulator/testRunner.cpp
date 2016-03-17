@@ -75,7 +75,7 @@ private:
             out << name.str() << " ";
         }
 
-        out << Colors::DarkGray; {
+        out << Colors::NoColor; {
             for(int i=name.str().length()+3; i<LINE_LENGTH; i++)
                 out << "-";
             out << "> ";
