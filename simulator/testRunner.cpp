@@ -44,7 +44,6 @@ namespace Colors{
     cstr Yellow      = "\033[1;33m";
 }
 
-
 class Test {
 public:
     uint32_t start;
@@ -71,17 +70,17 @@ public:
 private:
     void describe(ostream& out){
 
-        out << ((passed)? Colors::LightBlue : Colors::LightRed); {
+        out << ((passed)? Colors::Green : Colors::LightRed); {
             out << name.str() << " ";
         }
 
-        out << Colors::DarkGray; {
+        out << Colors::LightBlue; {
             for(int i=name.str().length()+3; i<LINE_LENGTH; i++)
                 out << "-";
             out << "> ";
         }
 
-        out << ((passed)? Colors::LightBlue : Colors::LightRed); {
+        out << ((passed)? Colors::Green : Colors::LightRed); {
             out << ((passed)? "passed" : "FAILED") << " ";
         }
 
