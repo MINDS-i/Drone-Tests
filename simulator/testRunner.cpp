@@ -147,6 +147,13 @@ int main(int argc, char const *argv[]) {
         cerr << "Failed to construct avr simulation" << endl;
         exit(1);
     }
+
+    avr->trace = 1;
+    avr->log = 2;
+    for (int vi = 0; vi < avr->interrupts.vector_count; vi++)
+        //if (avr->interrupts.vector[vi]->vector == 30)//trace_vectors[ti])
+            avr->interrupts.vector[vi]->trace = 1;
+
     avr_init(avr);
     avr_load_firmware(avr, &f);
 

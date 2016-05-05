@@ -1,6 +1,7 @@
 #pragma once
 #include <avr/io.h>
 #include <avr/sleep.h>
+#include <avr/interrupt.h>
 #include <stdio.h>
 #include <math.h>
 #include <float.h>
@@ -16,11 +17,13 @@
 __attribute__((constructor))
 void init_io() {
     fdevopen( [](char c, FILE * f) -> int { DBGD = c; return 0; }, NULL );
+    sei(); //enable interrupts
 }
 
 /* Configure the test device to sleep when main ends, stopping the sim */
 __attribute__((destructor))
 void sleep_after_exit() {
+    cli(); //turn off interrupts for shutdown
     sleep_mode();
 }
 
