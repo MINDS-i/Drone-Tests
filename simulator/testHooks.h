@@ -6,32 +6,11 @@
 #include <float.h>
 
 #include "testHooksCommon.h"
-
+#include "Arduino.h"
 /* Configure communication ports as writable IO registers */
 #define DBGS _MMIO_BYTE(SIGNAL_IO_NUM)
 #define DBGD _MMIO_BYTE(DATA_IO_NUM)
 #define FIX_SUBLIME_TEXT_HIGHLIGHTING_BUG
-
-/* Configure printf to write up to emulator in a constructor before main */
-__attribute__((constructor))
-void init_io() {
-    fdevopen( [](char c, FILE * f) -> int { DBGD = c; return 0; }, NULL );
-}
-
-/* Configure the test device to sleep when main ends, stopping the sim */
-__attribute__((destructor))
-void sleep_after_exit() {
-    sleep_mode();
-}
-
-bool fuzzyCompare(float a, float b, float diff=0.0000005){
-    float absA  = fabs(a);
-    float absB  = fabs(b);
-    float error = fabs(a - b);
-
-    if(b == 0 || a == 0) return error < diff;
-    return (error/(absA+absB)) < diff;
-}
 
 /* Call with printf syntax to start a test of a given name */
 #define beginTest(testName, ...) \
