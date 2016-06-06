@@ -28,6 +28,9 @@ avr.Append(LIBS = 'printf_flt')
 avr.Append(LINKFLAGS = ['-Wl,-u,vfprintf'])
 avr.Append(LINKFLAGS = [targetAVRplatform])
 
+if(ARGUMENTS.get('asm', False)):
+    avr.Append(CPPFLAGS = ['-fverbose-asm', '-S'])
+
 #The specific files from an arduino AVR core that we want compiled for our tests
 arduinoCoreDir = arduinoInstallDir+'/hardware/arduino/avr/cores/arduino/'
 arduinoFiles = ['Printable.h', 'Print.h', 'Stream.h', 'WString.h',
