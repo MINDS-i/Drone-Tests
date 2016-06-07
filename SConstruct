@@ -13,7 +13,7 @@ sim.Append(CPPPATH = [simavrLibDir])
 sim.Append(LIBS = ['simavr'])
 sim.Program('testRunner', 'simulator/testRunner.cpp')
 
-avr = DefaultEnvironment(CC = "avr-g++", CXX = "avr-g++")
+avr = DefaultEnvironment(CC="avr-g++",CXX="avr-g++")
 # avr = DefaultEnvironment(CC = arduinoInstallDir+"/hardware/tools/avr/bin/avr-g++",
 #                          CXX = arduinoInstallDir+"/hardware/tools/avr/bin/avr-g++")
 #Map drone/test src onto build dir so keep *.o and *.d files out of the way

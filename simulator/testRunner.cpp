@@ -53,7 +53,11 @@ public:
     bool nameDone;
     bool passed;
     bool benchmark;
-    Test(): start(0), end(0), name(), debug(), nameDone(false), passed(false) {
+    Test(bool primed): start(0), end(0), name(), debug(), nameDone(false), passed(false) {
+        if(!primed){
+            start = end = 1;
+            nameDone = true;
+        }
     }
     void clockStart(uint32_t clock){
         start = clock;
@@ -68,6 +72,9 @@ public:
     void receive(uint8_t v) {
         if(nameDone) debug << (char) v;
         else name << (char) v;
+    }
+    bool running() {
+        return (end==0);
     }
 private:
     void describe(ostream& out){
@@ -109,12 +116,15 @@ private:
     }
 };
 
-Test* test = new Test();
+Test* test = new Test(false);
 
 void data_callback(struct avr_t * avr, avr_io_addr_t r, uint8_t v, void * param){
     avr->data[r] = v;
 
-    test->receive(v);
+    if(test->running())
+        test->receive(v);
+    else
+        cout << v;
 }
 
 void sig_callback(struct avr_t * avr, avr_io_addr_t r, uint8_t v, void * param){
@@ -123,7 +133,7 @@ void sig_callback(struct avr_t * avr, avr_io_addr_t r, uint8_t v, void * param){
     switch(v){
         case NAME_START:
             delete test;
-            test = new Test();
+            test = new Test(true);
             break;
         case CLOCK_START:
             test->clockStart(avr->cycle);
