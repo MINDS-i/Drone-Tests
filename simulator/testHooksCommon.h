@@ -7,6 +7,7 @@ enum Signal : uint8_t {
     CLOCK_START,
     TEST_PASS,
     TEST_FAIL,
+    BENCH_FINISH,
 };
 
 /* These two IO addresses are reserved and unused on the atmega2560 */

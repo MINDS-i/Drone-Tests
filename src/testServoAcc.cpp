@@ -2,11 +2,13 @@
 #include <string.h>
 #include <util/delay.h>
 #include <avr/sleep.h>
+#include <avr/interrupt.h>
 #include <stdio.h>
 
-#include "Servo.h"
 #include "Arduino.h"
 #include "testHooks.h"
+#include "APM/ServoGenerator.h"
+//TESTING "APM/ServoGenerator.cpp"
 
 uint8_t pinMask = 0x1;
 volatile uint8_t* pinReg = &PORTD;
@@ -77,26 +79,9 @@ volatile uint16_t& OCRA = OCR1A;
 volatile uint16_t& TCNT = OCR1B; //TCNT isn't writable in the sim for some reason
 volatile uint8_t& TIFR = TIFR1;
 
-bool run(void){
-    //If the new value of OCR is lower than the current value of TCNT, the
-    //  interrupt will be missed
-
-    // OCRA < TCNT
-    //   t < TCNT no interrupt => loop
-    // OCRA == TCNT
-    //   t == TCNT interrupt => loop
-    //   t > TCNT interrupt => loop
-    // OCRA > TCNT
-    //   t < TCNT interrupt => loop
-    //   t == TCNT interrupt => loop
-    //   t > TCNT no interrupt => don't loop
-
-    //either catch the case where OCRA < TCNT when written,
-    //or clear interrupts and catch the case where t <= TCNT at the end of the function
-
+ISR(TIMER1_COMPA){
     do {
         output[next->channel].setLow();
-        //*output[next->channel].pinReg &= ~output[next->channel].pinMask;
         next++;
         uint16_t t = next->time;
         OCRA = t;
@@ -106,24 +91,7 @@ bool run(void){
     } while(true);
 }
 
-bool sortA(void){
-    for(uint8_t i=0; i<MAX_OUTPUTS; i++){
-        actions[i].time = output[actions[i].channel].highTime;
-    }
-    for(uint8_t i=1; i<MAX_OUTPUTS; i++){
-        uint16_t time = actions[i].time;
-        uint8_t j = i;
-        while(j>0 && time < actions[j-1].time){
-            Action a = actions[j-1];
-            actions[j-1] = actions[j];
-            actions[j] = a;
-            j--;
-        }
-    }
-    return true;
-}
-
-bool sortB(void){
+bool sort(void){
     //update each channels highTime; 0xffff if the channel is off
     for(uint8_t i=0; i<MAX_OUTPUTS; i++){
         actions[i].time = output[actions[i].channel].highTime;
@@ -162,7 +130,7 @@ int main(void){
     }
     next=actions;
     TCNT = 0;
-    TEST(run);
+    BENCHMARK_NAMED(TIMER1_COMPA, "TIMER1_COMPA (one action)");
 
     setupActions();
     for(int i=0; i<MAX_OUTPUTS; i++){
@@ -170,34 +138,20 @@ int main(void){
     }
     next=actions;
     TCNT = 0x0F00;
-    TEST(run);
+    BENCHMARK_NAMED(TIMER1_COMPA, "TIMER1_COMPA (all actions)");
 
     setupActions();
     for(int i=0; i<MAX_OUTPUTS; i++){
         output[i].highTime = i;
     }
-    TEST(sortA);
-    TEST(actionsSorted);
-
-    setupActions();
-    for(int i=0; i<MAX_OUTPUTS; i++){
-        output[i].highTime = i;
-    }
-    TEST(sortB);
+    BENCHMARK_NAMED(sort, "sort (sorted input)");
     TEST(actionsSorted);
 
     setupActions();
     for(int i=0; i<MAX_OUTPUTS; i++){
         output[i].highTime = MAX_OUTPUTS-i-1;
     }
-    TEST(sortA);
-    TEST(actionsSorted);
-
-    setupActions();
-    for(int i=0; i<MAX_OUTPUTS; i++){
-        output[i].highTime = MAX_OUTPUTS-i-1;
-    }
-    TEST(sortB);
+    BENCHMARK_NAMED(sort, "sort (inverse sorted input)");
     TEST(actionsSorted);
 
     timeClearPinLong();
@@ -216,13 +170,5 @@ int main(void){
     TEST(timeClearPinLong);
     TEST(pinIsLow);
 
-/*    beginTest("Servo printing");
-
-    Servo s;
-    s.attach(6);
-    s.write(90);
-    for(volatile uint16_t i=0; i<0xfffe; i++) ;
-
-    passTest();*/
     return 0;
 }

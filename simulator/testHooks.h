@@ -30,15 +30,29 @@
         DBGS = TEST_FAIL; \
     } while(0)
 
-#define TEST(test) \
+#define benchFinish() \
     do { \
-        beginTest(#test); \
+        DBGS = BENCH_FINISH; \
+    } while(0)
+
+#define TEST_NAMED(test, name, ...) \
+    do { \
+        beginTest(name, ##__VA_ARGS__); \
         if (test()) { \
             passTest(); \
         } else { \
             failTest(); \
         } \
     } while(0)
+#define TEST(testFunc) TEST_NAMED(testFunc, #testFunc)
+
+#define BENCHMARK_NAMED(mark, name, ...) \
+    do { \
+        beginTest(name, ##__VA_ARGS__); \
+        mark(); \
+        benchFinish(); \
+    } while(0)
+#define BENCHMARK(markFunc) BENCHMARK_NAMED(markFunc, #markFunc)
 
 #define ASSERT(a) \
     do { \

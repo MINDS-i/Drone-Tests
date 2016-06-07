@@ -52,15 +52,17 @@ public:
     stringstream debug;
     bool nameDone;
     bool passed;
+    bool benchmark;
     Test(): start(0), end(0), name(), debug(), nameDone(false), passed(false) {
     }
     void clockStart(uint32_t clock){
         start = clock;
         nameDone = true;
     }
-    void finish(uint32_t clock, bool pass) {
+    void finish(uint32_t clock, bool pass, bool bench) {
         end = clock;
         passed = pass;
+        benchmark = bench;
         describe(cout);
     }
     void receive(uint8_t v) {
@@ -80,12 +82,16 @@ private:
             out << "> ";
         }
 
-        out << ((passed)? Colors::Green : Colors::LightRed); {
-            out << ((passed)? "passed" : "FAILED") << " ";
+        if(!benchmark){
+            out << ((passed)? Colors::Green : Colors::LightRed); {
+                out << ((passed)? "passed" : "FAILED") << " ";
+            }
         }
 
         out << Colors::Blue; {
-            out << "(" << (end-start) << " cycles)";
+            if(!benchmark) out << "(";
+            out << (end-start) << " cycles";
+            if(!benchmark) out << ")";
             out << endl;
         }
 
@@ -123,10 +129,13 @@ void sig_callback(struct avr_t * avr, avr_io_addr_t r, uint8_t v, void * param){
             test->clockStart(avr->cycle);
             break;
         case TEST_PASS:
-            test->finish(avr->cycle, true);
+            test->finish(avr->cycle, true, false);
             break;
         case TEST_FAIL:
-            test->finish(avr->cycle, false);
+            test->finish(avr->cycle, false, false);
+            break;
+        case BENCH_FINISH:
+            test->finish(avr->cycle, true, true);
             break;
     }
 }
