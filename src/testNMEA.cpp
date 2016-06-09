@@ -180,6 +180,7 @@ bool delayedInput(){
     FPASSERT(goodData[0].trackAngle, nmea.getCourse());
     CASSERT( goodData[0].date, nmea.getDateOfFix());
     FPASSERT(goodData[0].magVar, nmea.getMagVar());
+    return true;
 }
 bool testNewInput(){
     StringStream ss(goodData[0].str);
@@ -223,6 +224,7 @@ bool skipEmptyFields(){
     FPASSERT(523.036, nmea.getTimeOfFix());
     FPASSERT(0.0, nmea.getGroundSpeed());
     FPASSERT(0.0, nmea.getCourse());
+    return true;
 }
 void benchmark(){
     for(int i=0; i<numGoodData; i++){

@@ -31,12 +31,14 @@ bool toRadTest(){
     for(int i=0; i<numTCs; i++){
         FPASSERTC(toRad(cases[i].deg), cases[i].rad, EPSILON);
     }
+    return true;
 }
 
 bool toDegTest(){
     for(int i=0; i<numTCs; i++){
         FPASSERTC(toDeg(cases[i].rad), cases[i].deg, EPSILON);
     }
+    return true;
 }
 
 int main(void){
