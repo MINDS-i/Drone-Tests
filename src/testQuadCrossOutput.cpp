@@ -42,12 +42,12 @@ int main(void){
     float zeros[4] = {0.0, 0.0, 0.0, 0.0};
     beginTest("Benchmark 0's");
     solveOutputs(zeros ,result);
-    passTest();
+    benchFinish();
 
     float ones[4] = {1.0, 1.0, 1.0, 1.0};
     beginTest("Benchmark 1's");
     solveOutputs(ones ,result);
-    passTest();
+    benchFinish();
 
     return 0;
 }

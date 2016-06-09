@@ -230,9 +230,9 @@ void benchmark(){
     for(int i=0; i<numGoodData; i++){
         StringStream ss(goodData[i].str);
         NMEA nmea(ss);
-        beginTest("benchmark %i", i);
+        beginTest("parse %s", goodData[i].desc);
         nmea.update();
-        passTest();
+        benchFinish();
     }
 }
 
