@@ -98,10 +98,18 @@ private:
         out << Colors::Blue; {
             if(!benchmark) out << "(";
             out << (end-start) << " cycles";
-            if(!benchmark) out << ")";
-            out << endl;
+            if(!benchmark) out << ") ";
         }
 
+        if(benchmark){
+            out << Colors::Blue; {
+                out << " - ";
+                out << (((end-start)/16.0)/1000.0);
+                out << " ms ";
+            }
+        }
+
+        out << endl;
         out << Colors::NoColor;
 
         //Echo the debugging info we received, but tabbed in one level
