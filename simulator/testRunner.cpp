@@ -167,6 +167,7 @@ int main(int argc, char const *argv[]) {
         exit(1);
     }
     avr_init(avr);
+    avr->frequency = 16E6;
     avr_load_firmware(avr, &f);
 
     avr_register_io_write(avr, SIGNAL_IO_NUM, sig_callback, NULL);
