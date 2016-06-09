@@ -3,10 +3,10 @@
 #include <avr/interrupt.h>
 
 uint32_t _falseTime;
-uint32_t micros(){
+volatile uint32_t micros(){
 	return _falseTime;
 }
-uint32_t millis(){
+volatile uint32_t millis(){
 	return (_falseTime/1000UL);
 }
 void advanceMicros(uint32_t us){

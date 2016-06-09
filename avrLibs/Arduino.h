@@ -24,8 +24,8 @@
 typedef bool boolean;
 bool fuzzyCompare(float a, float b, float diff=0.0000005);
 
-uint32_t micros();
-uint32_t millis();
+volatile uint32_t micros();
+volatile uint32_t millis();
 void advanceMicros(uint32_t us);
 void advanceMillis(uint32_t ms);
 void setMicros(uint32_t us);
