@@ -25,6 +25,22 @@ bool QtestAxisAngleConstr(){
 										0,
 										0	), 0.00001);
 }
+bool QtestMapConstructor(){
+	Vec3 a(1,0,0);
+	Vec3 b(0,1,0);
+	Quaternion map(a,b);
+	a.rotateBy(map);
+	return fuzzyCompare(a[0], b[0]) &&
+	       fuzzyCompare(a[1], b[1]) &&
+	       fuzzyCompare(a[2], b[2]);
+}
+bool QtestFromAccl(){
+	Quaternion orig(Vec3(1,0,0),toRad(45));
+	Vec3 accl(0,0,1);
+	accl.rotateBy(orig);
+	Quaternion res(Vec3(0,0,1), accl);
+	return fuzzyQCompare(orig, res);
+}
 bool QtestInverse(){
 	Quaternion a(1, 0, 1, 2);
 	return fuzzyQCompare(a.inverse(), Quaternion(1,0,-1,-2));
@@ -39,11 +55,6 @@ bool QtestLength(){
 	Quaternion b(1,2,3,4);
 	return	fuzzyCompare(a.length(), 1) &&
 			fuzzyCompare(b.length(), 5.477225);
-}
-bool QtestDistance(){
-	Quaternion a(Vec3(1,1,0), toRad(90));
-	Quaternion b(Vec3(1,1,0), toRad(45));
-	return fuzzyCompare(a.distance(b), toRad(45));
 }
 bool QtestAxis(){
 	Quaternion a(1, 0, 1, 2);
@@ -206,46 +217,32 @@ bool QtestTransitive2(){
 
 	return fuzzyQCompare(hat, Hat);
 }
-bool QtestDerivative(){
+bool QtestDerivativeIntegrate(){
 	Quaternion a(Vec3( 2, 3, 4), toRad(35));
-	Quaternion b(Vec3( 2,-4, 3), toRad(37));
+	Quaternion b(Vec3( 2, 3, 4), toRad(40));
 
 	Vec3 rate = a.getDerivative(b);
 	a.integrate(rate);
-	float dist = a.distance(b);
 
-	return fuzzyCompare(dist, 0);
+	return fuzzyQCompare(a,b,0.001);
 }
-bool QtestIntegrate(){
+bool QtestDerivativePreintegrate(){
 	Quaternion a(Vec3( 2, 3, 4), toRad(35));
-	Quaternion b(Vec3( 2,-4, 3), toRad(37));
+	Quaternion b(Vec3( 2, 3, 4), toRad(40));
 
-	float samps = 20;
-	float dist;
-	for(int i=0; i<6*samps; i++){
-		Vec3 rate = a.getDerivative(b, (1.f/samps));
-		a.integrate(rate);
-		dist = a.distance(b);
-		if(a.error()) break;
-		if(dist == 0) break;
-	}
+	Vec3 rate = a.getDerivative(b);
+	rate.rotateBy(~a);
+	a.preintegrate(rate);
 
-	return fuzzyCompare(dist, 0);
-}
-bool QtestFromAccl(){
-	Quaternion orig(Vec3(1,0,0),toRad(45));
-	Vec3 accl(0,0,1);
-	accl.rotateBy(orig);
-	Quaternion res(Vec3(0,0,1), accl);
-	return fuzzyQCompare(orig, res);
+	return fuzzyQCompare(a,b,0.001);
 }
 int main(){
 	TEST(QtestEulerConstr	 );
 	TEST(QtestAxisAngleConstr);
+	TEST(QtestMapConstructor );
 	TEST(QtestInverse		 );
 	TEST(QtestDot			 );
 	TEST(QtestLength		 );
-	TEST(QtestDistance		 );
 	TEST(QtestAxis			 );
 	TEST(QtestGetPitch		 );
 	TEST(QtestGetPitch2      );
@@ -271,7 +268,7 @@ int main(){
 	TEST(QtestErrorNegative  );
 	TEST(QtestTransitive     );
 	TEST(QtestTransitive2    );
-	TEST(QtestDerivative     );
-	TEST(QtestIntegrate      );
+	TEST(QtestDerivativeIntegrate);
+	TEST(QtestDerivativePreintegrate);
 	TEST(QtestFromAccl       );
 }
