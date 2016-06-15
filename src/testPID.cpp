@@ -152,7 +152,7 @@ bool PIDstopTest(){
     FPASSERT(pid.update(1), -1.0);
     pid.stop();
     advanceMicros(1000);
-    FPASSERT(pid.update(0), 0.0);
+    FPASSERT(pid.update(1), 0.0);
     pid.set(1);//restarts on set
     advanceMicros(1000);
     FPASSERT(pid.update(0), 1.0);
