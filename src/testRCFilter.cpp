@@ -9,6 +9,8 @@
 //TESTING "math/Vec3.cpp"
 //TESTING "math/Quaternion.cpp"
 
+const float DELTA_T = 5.0; // elapsed time is milliseconds to report
+
 bool filterInit(void){
 	RCFilter filter(1.0, 1.0);
 	return true;
@@ -22,7 +24,7 @@ bool inertialManagerInit(void){
 void initAndUpdate(void){
 	RCFilter filter(0.177, 0.177);
 	InertialManager m((InertialVec**)NULL,(Translator*)NULL,0);
-	filter.update(m);
+	filter.update(m, DELTA_T);
 }
 
 int main(){
