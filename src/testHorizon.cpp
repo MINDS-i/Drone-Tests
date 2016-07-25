@@ -4,7 +4,7 @@
 #include "util/PIDcontroller.h"
 #include "util/PIDparameters.h"
 #include "filter/RCFilter.h"
-#include "output/Horizon.h"
+#include "controllers/Horizon.h"
 //TESTING "math/Vec3.cpp"
 //TESTING "math/Quaternion.cpp"
 //TESTING "math/GreatCircle.cpp"
