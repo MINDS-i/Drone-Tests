@@ -185,13 +185,12 @@ bool delayedInput(){
 bool testNewInput(){
     StringStream ss(goodData[0].str);
     NMEA nmea(ss);
-    ASSERT(!nmea.newData());
+    uint16_t dataIndex = nmea.dataIndex();
     nmea.update();
-    ASSERT(nmea.newData());
-    nmea.getLatitude();
-    ASSERT(!nmea.newData());
-    nmea.update();
-    ASSERT(!nmea.newData());
+    ASSERT(dataIndex != nmea.dataIndex());
+    dataIndex = nmea.dataIndex();
+    nmea.update(); // no new data
+    ASSERT(dataIndex == nmea.dataIndex());
     return true;
 }
 bool badStringFirst(){

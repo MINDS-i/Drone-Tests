@@ -1,16 +1,7 @@
 #include "testHooks.h"
-#include "math/GreatCircle.h"
-//TESTING "math/GreatCircle.cpp"
-//TESTING "math/SpatialMath.cpp"
-
-/*
-//return val in a +/- half turn range to ref
-float simplifyRadian(float ref, float val);
-float simplifyDegree(float ref, float val);
-//return the angle that turns a onto b
-inline float distanceRadian(float a, float b){ return simplifyRadian(0, b-a); }
-inline float distanceDegree(float a, float b){ return simplifyDegree(0, b-a); }
-*/
+#include "math/Waypoint.h"
+#include "math/SpatialMath.h"
+//TESTING "math/Waypoint.cpp"
 
 const float EPS = 0.001; //allowable error epsilon for floating point ops
 
@@ -79,14 +70,16 @@ const int numPaths = sizeof(testPaths)/sizeof(testPaths[0]);
 bool GCcalcHeading(){
     for(int i=0; i<numPaths; i++){
         TestPath t = testPaths[i];
-        FPASSERTC(calcHeading(t.start, t.end), t.heading, EPS);
+        FPASSERTC(t.start.headingTo(t.end), t.heading, EPS);
+            //calcHeading(t.start, t.end), t.heading, EPS);
     }
     return true;
 }
 bool GCcalcDistance(){
     for(int i=0; i<numPaths; i++){
         TestPath t = testPaths[i];
-        FPASSERTC(calcDistance(t.start, t.end), t.distance, EPS);
+        FPASSERTC(t.start.distanceTo(t.end), t.distance, EPS);
+            //calcDistance(t.start, t.end), t.distance, EPS);
     }
     return true;
 }
@@ -94,8 +87,10 @@ bool GCcalcDistance(){
 bool GCextrapPosition(){
     for(int i=0; i<numPaths; i++){
         TestPath t = testPaths[i];
-        Waypoint result = extrapPosition(t.start, t.heading, t.distance);
-        FPASSERTC(calcDistance(result, t.end), 0.0, 2*EPS);
+        Waypoint result = t.start.extrapolate(t.heading, t.distance);
+            //extrapPosition(t.start, t.heading, t.distance);
+        FPASSERTC(result.distanceTo(t.end), 0.0, 2*EPS);
+            //calcDistance(result, t.end), 0.0, 2*EPS);
     }
     return true;
 }
