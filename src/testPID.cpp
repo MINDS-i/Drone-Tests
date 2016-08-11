@@ -159,6 +159,27 @@ bool PIDstopTest(){
     return true;
 }
 
+bool PIDtestNaN(){
+    PIDparameters params(1,1,1);
+    PIDcontroller pid(&params);
+    setMicros(0);
+
+    pid.set(0.0);
+    advanceMicros(1000);
+    float output = pid.update(NAN);
+    FPASSERT(output, 0.0);
+    advanceMicros(1000);
+    output = pid.update(INFINITY);
+    FPASSERT(output, 0.0);
+    advanceMicros(1000);
+    output = pid.update(-INFINITY);
+    FPASSERT(output, 0.0);
+    advanceMicros(1000);
+    output = pid.update(1.0);
+    ASSERT(output != 0.0);
+    return true;
+}
+
 int main(){
     TEST(PIDporp            );
     TEST(PIDintegral        );
@@ -169,4 +190,5 @@ int main(){
     TEST(PIDIllegalTrain    );
     TEST(PIDretuneTest      );
     TEST(PIDstopTest        );
+    TEST(PIDtestNaN         );
 }
