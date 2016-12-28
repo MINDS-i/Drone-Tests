@@ -60,8 +60,6 @@ bool crossOutputExpected(void){
 int main(void){
     float result[4];
 
-    TEST(crossOutputExpected);
-
     float zeros[4] = {0.0, 0.0, 0.0, 0.0};
     beginTest("Benchmark 0's");
     solveOutputs(zeros ,result);
